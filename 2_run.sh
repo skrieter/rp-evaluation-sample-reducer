@@ -14,4 +14,5 @@ java ${args} prepare_gd
 java ${args} yasa
 java ${args} combine
 java ${args} reduce
+java ${args} reduce_random
 java ${args} coverage
