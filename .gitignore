@@ -4,3 +4,4 @@ build/resources
 build/scripts
 build/tmp
 build/scriptsShadow
+.gradle
