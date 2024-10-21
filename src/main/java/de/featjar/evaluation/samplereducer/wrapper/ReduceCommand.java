@@ -37,6 +37,7 @@ import de.featjar.evaluation.samplereducer.sampler.ISampleReducer;
 import de.featjar.evaluation.samplereducer.sampler.NewSampleReducer;
 import de.featjar.evaluation.samplereducer.sampler.RandomSampleReducer;
 import de.featjar.evaluation.samplereducer.sampler.SampleReducer;
+import de.featjar.evaluation.samplereducer.sampler.SetCoverSampleReducer;
 import de.featjar.formula.assignment.ABooleanAssignment;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
@@ -78,6 +79,9 @@ public class ReduceCommand extends AAnalysisCommand<BooleanAssignmentGroups> {
                 break;
             case "BitSetScoring2SampleReducer":
                 reducer = new BitSetScoring2SampleReducer();
+                break;
+            case "SetCoverSampleReducer":
+                reducer = new SetCoverSampleReducer();
                 break;
             case "NewSampleReducer":
                 reducer = new NewSampleReducer();
