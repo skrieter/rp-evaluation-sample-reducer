@@ -5,3 +5,9 @@ build/scripts
 build/tmp
 build/scriptsShadow
 .gradle
+.classpath
+.project
+.settings
+bin
+error.log
+out.log
