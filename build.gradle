@@ -9,7 +9,7 @@ repositories {
 }
 
 group = 'de.featjar'
-version = '1.0'
+version = '0.1.0-SNAPSHOT'
 
 dependencies {
     implementation 'net.tascalate:net.tascalate.concurrent:0.9.6'

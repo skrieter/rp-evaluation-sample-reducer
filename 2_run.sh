@@ -4,7 +4,7 @@
 config_dir='config'
 max_memory='128'
 
-args="-Xmx${max_memory}g -jar build/libs/evaluation-sample-reducer-1.0-all.jar --config_dir ${config_dir} --config"
+args="-Xmx${max_memory}g -jar build/libs/evaluation-sample-reducer-0.1.0-SNAPSHOT-all.jar --config_dir ${config_dir} --config"
 
 # Run
 java ${args} clean
