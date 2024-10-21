@@ -33,7 +33,7 @@ import de.featjar.evaluation.process.ProcessResult;
 import de.featjar.evaluation.process.ProcessRunner;
 import de.featjar.evaluation.samplereducer.wrapper.ReduceAlgorithm;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -107,7 +107,8 @@ public class CreateReducedSamplePhase extends ACreateSamplePhase {
 
     @Override
     protected int getTaskCount() {
-        return samples.get(getSystemId(modelName)).size();
+        List<Pair<String, Integer>> sampleList = samples.get(getSystemId(modelName));
+        return sampleList != null ? sampleList.size() : 0;
     }
 
     @Override
@@ -161,7 +162,7 @@ public class CreateReducedSamplePhase extends ACreateSamplePhase {
                     seed);
             return;
         }
-        Result<BooleanAssignmentGroups> reducedSample = IO.load(reducedFile, new BooleanAssignmentGroupsBinaryFormat());
+        Result<BooleanAssignmentGroups> reducedSample = IO.load(reducedFile, new BooleanAssignmentGroupsCompressedFormat());
         if (reducedSample.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", reducedFile);
             FeatJAR.log().problems(reducedSample.getProblems(), Verbosity.WARNING);

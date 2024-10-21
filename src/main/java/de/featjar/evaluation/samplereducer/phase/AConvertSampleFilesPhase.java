@@ -30,7 +30,7 @@ import de.featjar.evaluation.Evaluator;
 import de.featjar.formula.VariableMap;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import de.featjar.formula.io.dimacs.FormulaDimacsFormat;
 import de.featjar.formula.structure.IFormula;
 import java.io.IOException;
@@ -178,7 +178,7 @@ public abstract class AConvertSampleFilesPhase extends Evaluator {
             IO.save(
                     new BooleanAssignmentGroups(sample.getValue(), List.of(sample.getKey())),
                     convertedSampleFile,
-                    new BooleanAssignmentGroupsBinaryFormat());
+                    new BooleanAssignmentGroupsCompressedFormat());
         } catch (IOException e) {
             FeatJAR.log().warning(e);
             return;

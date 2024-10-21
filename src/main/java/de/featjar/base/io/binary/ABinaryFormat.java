@@ -66,10 +66,7 @@ public abstract class ABinaryFormat<T> implements IFormat<T> {
 
     protected byte[] readBytes(InputStream in, int size) throws IOException {
         final byte[] bytes = new byte[size];
-        final int byteCount = in.read(bytes, 0, bytes.length);
-        if (byteCount != bytes.length) {
-            throw new IOException();
-        }
+        in.read(bytes, 0, bytes.length);
         return bytes;
     }
 
@@ -83,10 +80,7 @@ public abstract class ABinaryFormat<T> implements IFormat<T> {
 
     protected int readInt(InputStream in) throws IOException {
         final byte[] integerBytes = new byte[Integer.BYTES];
-        final int byteCount = in.read(integerBytes, 0, integerBytes.length);
-        if (byteCount != integerBytes.length) {
-            throw new IOException();
-        }
+        in.read(integerBytes, 0, integerBytes.length);
         return ((integerBytes[0] & 0xff) << 24)
                 | ((integerBytes[1] & 0xff) << 16)
                 | ((integerBytes[2] & 0xff) << 8)

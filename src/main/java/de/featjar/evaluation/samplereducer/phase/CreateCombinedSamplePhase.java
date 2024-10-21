@@ -29,7 +29,7 @@ import de.featjar.formula.VariableMap;
 import de.featjar.formula.assignment.ABooleanAssignment;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -102,7 +102,7 @@ public class CreateCombinedSamplePhase extends ACreateSamplePhase {
         Path fieldSamplePath = Paths.get(fieldSamples.get(systemID));
 
         Result<BooleanAssignmentGroups> fieldSampleResult =
-                IO.load(fieldSamplePath, new BooleanAssignmentGroupsBinaryFormat());
+                IO.load(fieldSamplePath, new BooleanAssignmentGroupsCompressedFormat());
         if (fieldSampleResult.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", fieldSamplePath);
             FeatJAR.log().problems(fieldSampleResult.getProblems(), Verbosity.WARNING);
@@ -124,7 +124,7 @@ public class CreateCombinedSamplePhase extends ACreateSamplePhase {
             }
 
             Result<BooleanAssignmentGroups> yasaSampleResult =
-                    IO.load(yasaSamplePath, new BooleanAssignmentGroupsBinaryFormat());
+                    IO.load(yasaSamplePath, new BooleanAssignmentGroupsCompressedFormat());
             if (yasaSampleResult.isEmpty()) {
                 FeatJAR.log().warning("Could not read file %s", yasaSamplePath);
                 FeatJAR.log().problems(yasaSampleResult.getProblems(), Verbosity.WARNING);

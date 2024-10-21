@@ -41,7 +41,7 @@ import de.featjar.evaluation.samplereducer.sampler.SetCoverSampleReducer;
 import de.featjar.formula.assignment.ABooleanAssignment;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +102,7 @@ public class ReduceCommand extends AAnalysisCommand<BooleanAssignmentGroups> {
     }
 
     private Result<BooleanAssignmentGroups> computeReducedSample() {
-        Result<BooleanAssignmentGroups> sample = IO.load(inputPath, new BooleanAssignmentGroupsBinaryFormat());
+        Result<BooleanAssignmentGroups> sample = IO.load(inputPath, new BooleanAssignmentGroupsCompressedFormat());
         if (sample.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", inputPath);
             FeatJAR.log().problems(sample.getProblems(), Verbosity.WARNING);
@@ -119,6 +119,6 @@ public class ReduceCommand extends AAnalysisCommand<BooleanAssignmentGroups> {
 
     @Override
     protected IFormat<?> getOuputFormat() {
-        return new BooleanAssignmentGroupsBinaryFormat();
+        return new BooleanAssignmentGroupsCompressedFormat();
     }
 }

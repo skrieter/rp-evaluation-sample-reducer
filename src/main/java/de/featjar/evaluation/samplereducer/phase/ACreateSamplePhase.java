@@ -29,7 +29,7 @@ import de.featjar.evaluation.Evaluator;
 import de.featjar.formula.VariableMap;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -163,7 +163,7 @@ public abstract class ACreateSamplePhase extends Evaluator {
             IO.save(
                     new BooleanAssignmentGroups(variables, List.of(sample)),
                     path,
-                    new BooleanAssignmentGroupsBinaryFormat());
+                    new BooleanAssignmentGroupsCompressedFormat());
             writeSampleCSVEntry(
                     relativePath,
                     sample.size(),

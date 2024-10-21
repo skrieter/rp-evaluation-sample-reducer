@@ -36,7 +36,7 @@ import de.featjar.formula.assignment.ABooleanAssignment;
 import de.featjar.formula.assignment.BooleanAssignmentGroups;
 import de.featjar.formula.assignment.BooleanSolution;
 import de.featjar.formula.assignment.BooleanSolutionList;
-import de.featjar.formula.io.binary.BooleanAssignmentGroupsBinaryFormat;
+import de.featjar.formula.io.binary.BooleanAssignmentGroupsCompressedFormat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -159,7 +159,7 @@ public class ComputeCoveragePhase extends Evaluator {
             return;
         }
         Result<BooleanAssignmentGroups> fieldSampleResult =
-                IO.load(fieldSamplePath, new BooleanAssignmentGroupsBinaryFormat());
+                IO.load(fieldSamplePath, new BooleanAssignmentGroupsCompressedFormat());
         if (fieldSampleResult.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", fieldSamplePath);
             FeatJAR.log().problems(fieldSampleResult.getProblems(), Verbosity.WARNING);
@@ -208,7 +208,7 @@ public class ComputeCoveragePhase extends Evaluator {
         }
 
         Result<BooleanAssignmentGroups> yasaSampleResult =
-                IO.load(yasaSamplePath, new BooleanAssignmentGroupsBinaryFormat());
+                IO.load(yasaSamplePath, new BooleanAssignmentGroupsCompressedFormat());
         if (yasaSampleResult.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", yasaSamplePath);
             FeatJAR.log().problems(yasaSampleResult.getProblems(), Verbosity.WARNING);
@@ -239,7 +239,7 @@ public class ComputeCoveragePhase extends Evaluator {
             return;
         }
         Result<BooleanAssignmentGroups> otherSampleResult =
-                IO.load(samplePath, new BooleanAssignmentGroupsBinaryFormat());
+                IO.load(samplePath, new BooleanAssignmentGroupsCompressedFormat());
         if (otherSampleResult.isEmpty()) {
             FeatJAR.log().warning("Could not read file %s", samplePath);
             FeatJAR.log().problems(otherSampleResult.getProblems(), Verbosity.WARNING);
