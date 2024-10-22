@@ -128,8 +128,10 @@ public class CreateReducedSamplePhase extends ACreateSamplePhase {
             FeatJAR.log().info("Skipping %s (already exists)", modelName);
             return;
         }
+        ReduceAlgorithm algorithm = new ReduceAlgorithm(path, reducedFile, t, seed + algorithmIteration, algorithmName);
+        algorithm.setMemory(optionParser.get(memory));
         ProcessResult<Void> run =
-                runner.run(new ReduceAlgorithm(path, reducedFile, t, seed + algorithmIteration, algorithmName));
+                runner.run(algorithm);
         if (!run.isNoError()) {
             FeatJAR.log().warning("Error during reduction occured", reducedFile);
             writeSampleCSVEntry(
