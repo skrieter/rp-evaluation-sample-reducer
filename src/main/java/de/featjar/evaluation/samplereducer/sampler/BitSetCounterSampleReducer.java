@@ -39,11 +39,11 @@ public class BitSetCounterSampleReducer implements ISampleReducer {
             super(solution);
         }
 
-        public synchronized void incScore(double s) {
+        public synchronized void incScore() {
             interactionCount++;
         }
 
-        public synchronized void decScore(double s) {
+        public synchronized void decScore() {
             interactionCount--;
         }
 
@@ -204,10 +204,8 @@ public class BitSetCounterSampleReducer implements ISampleReducer {
                         for (int k2 = 0; k2 < is.length; k2++) {
                             curIndices.and(indices[is[k2] + n]);
                         }
-                        double s = 1.0 / interaction.getCounter();
-                        curIndices.stream()
-                                .mapToObj(i -> fieldConfigurations[i])
-                                .forEach(c -> c.incScore(s));
+                        curIndices.stream().forEach(i ->
+                            fieldConfigurations[i].incScore());
                         return false;
                     }
                 })
@@ -243,10 +241,8 @@ public class BitSetCounterSampleReducer implements ISampleReducer {
                         for (int k2 = 0; k2 < is.length; k2++) {
                             curIndices.and(indices[is[k2] + n]);
                         }
-                        double s = 1.0 / interaction.getCounter();
-                        curIndices.stream()
-                                .mapToObj(i -> fieldConfigurations[i])
-                                .forEach(c -> c.decScore(s));
+                        curIndices.stream().forEach(i -> 
+                            fieldConfigurations[i].decScore());
                     })
                     .collect(Collectors.toList());
 

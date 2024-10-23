@@ -208,9 +208,8 @@ public class BitSetScoring1SampleReducer implements ISampleReducer {
                             curIndices.and(indices[is[k2] + n]);
                         }
                         double s = 1.0 / interaction.getCounter();
-                        curIndices.stream()
-                                .mapToObj(i -> fieldConfigurations[i])
-                                .forEach(c -> c.incScore(s));
+                        curIndices.stream().forEach(i ->
+                                fieldConfigurations[i].incScore(s));
                         return false;
                     }
                 })
@@ -247,9 +246,8 @@ public class BitSetScoring1SampleReducer implements ISampleReducer {
                             curIndices.and(indices[is[k2] + n]);
                         }
                         double s = 1.0 / interaction.getCounter();
-                        curIndices.stream()
-                                .mapToObj(i -> fieldConfigurations[i])
-                                .forEach(c -> c.decScore(s));
+                        curIndices.stream().forEach(i ->
+                                fieldConfigurations[i].decScore(s));
                     })
                     .collect(Collectors.toList());
 
