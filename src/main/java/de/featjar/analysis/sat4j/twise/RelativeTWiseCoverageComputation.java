@@ -47,7 +47,6 @@ public class RelativeTWiseCoverageComputation extends AComputation<CoverageStati
     public static final Dependency<BooleanAssignment> FILTER = Dependency.newDependency(BooleanAssignment.class);
 
     public class Environment {
-        private SampleListIndex sampleIndex = new SampleListIndex(sample.getAll(), size, t);
         private final CoverageStatistic statistic = new CoverageStatistic();
 
         public CoverageStatistic getStatistic() {
@@ -85,6 +84,7 @@ public class RelativeTWiseCoverageComputation extends AComputation<CoverageStati
             size = sample.get(0).get().size();
 
             SampleBitIndex referenceIndex = new SampleBitIndex(referenceSample.getAll(), size);
+            SampleBitIndex sampleIndex = new SampleBitIndex(sample.getAll(), size);
 
             final int[] literals = Ints.filteredList(size, FILTER.get(dependencyList));
             final int[] gray = Ints.grayCode(t);
@@ -94,7 +94,7 @@ public class RelativeTWiseCoverageComputation extends AComputation<CoverageStati
                         int[] select = combo.getSelection(literals);
                         for (int i = 0; i < gray.length; i++) {
                             if (referenceIndex.test(select)) {
-                                if (combo.environment.sampleIndex.test(select)) {
+                                if (sampleIndex.test(select)) {
                                     combo.environment.statistic.incNumberOfCoveredConditions();
                                 } else {
                                     combo.environment.statistic.incNumberOfUncoveredConditions();
