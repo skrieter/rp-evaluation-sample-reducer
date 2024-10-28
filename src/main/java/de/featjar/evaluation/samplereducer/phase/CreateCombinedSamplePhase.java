@@ -137,7 +137,17 @@ public class CreateCombinedSamplePhase extends ACreateSamplePhase {
             VariableMap newVariableMap = fieldSampleVariableMap.clone();
             VariableMap yasaSampleVariableMap = yasaSampleResult.get().getVariableMap();
             newVariableMap.addAll(yasaSampleVariableMap);
-            fieldSample.stream().map(ABooleanAssignment::toSolution).forEach(combinedSample::add);
+            fieldSample.stream()
+                     .map(a -> {
+                        int[] adaptedLiterals =
+		                        a.adapt(fieldSampleVariableMap, newVariableMap).orElseThrow();
+                        int[] newLiterals = IntStream.range(0, newVariableMap.getVariableCount())
+		                        .map(i -> -(i + 1))
+		                        .toArray();
+                        Arrays.stream(adaptedLiterals).forEach(l -> newLiterals[Math.abs(l) - 1] = l);
+                        return new BooleanSolution(newLiterals);
+                    })
+                    .forEach(combinedSample::add);
             yasaSample.stream()
                     .map(a -> {
                         int[] adaptedLiterals =

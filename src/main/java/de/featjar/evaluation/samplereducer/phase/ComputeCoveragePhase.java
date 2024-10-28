@@ -250,8 +250,9 @@ public class ComputeCoveragePhase extends Evaluator {
         VariableMap newVariableMap = referenceVariableMap.clone();
         BooleanSolutionList otherSample = new BooleanSolutionList(otherSampleResult.get().getGroups().get(0).stream()
                 .map(s -> {
+                    int[] literals = Arrays.stream(s.get()).filter(l -> l != 0).toArray();
                     int[] adaptedLiterals = ABooleanAssignment.adaptAddVariables(
-                                    s.get(), otherVariableMap, newVariableMap)
+                                    literals, otherVariableMap, newVariableMap)
                             .orElseThrow();
                     int[] newLiterals = IntStream.range(0, newVariableMap.getVariableCount())
                             .map(i -> -(i + 1))
