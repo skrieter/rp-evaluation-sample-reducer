@@ -20,75 +20,243 @@
  */
 package de.featjar.evaluation.samplereducer.sampler;
 
-import de.featjar.base.data.Ints;
-import de.featjar.base.data.LexicographicIterator;
-import de.featjar.formula.assignment.BooleanClause;
 import de.featjar.formula.assignment.BooleanSolution;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class RandomSampleReducer implements ISampleReducer {
 
+    private static class Config extends BooleanSolution {
+        private static final long serialVersionUID = 7692323415854153880L;
+
+        int interactionCount = 0;
+
+        public Config(BooleanSolution solution) {
+            super(solution);
+        }
+
+        public synchronized void incScore() {
+            interactionCount++;
+        }
+
+        public synchronized void decScore() {
+            interactionCount--;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+    }
+
+    private Config[] fieldConfigurations;
+    private int n, t, t2;
+
+    private LinkedHashSet<BooleanSolution> reducedSample;
+    private LinkedHashSet<Interaction> interactions;
+    private BitSet masterBitSet;
+    private BitSet[] indices;
+    
     private final long seed;
 
     public RandomSampleReducer(long seed) {
         this.seed = seed;
     }
 
+    private void generate(int first) {
+        int[] elementIndices;
+        boolean[] marker;
+        elementIndices = new int[t];
+        marker = new boolean[t];
+        for (int i = 0; i < t - 1; i++) {
+            elementIndices[i] = i;
+        }
+        elementIndices[t - 1] = first;
+
+        int i = 0;
+        for (; ; ) {
+            int[] literals = new int[t];
+            BitSet curIndices = (BitSet) masterBitSet.clone();
+            for (int k2 = 0; k2 < literals.length; k2++) {
+                int var = elementIndices[k2] + 1;
+                int l = marker[k2] ? -var : var;
+                literals[k2] = l;
+                curIndices.and(indices[l + n]);
+            }
+            int counter = curIndices.cardinality();
+            if (counter > 1) {
+                Interaction interaction = new Interaction(literals);
+                interaction.setCounter(counter);
+                synchronized (interactions) {
+                    interactions.add(interaction);
+                }
+            } else if (counter == 1) {
+                BooleanSolution config = fieldConfigurations[curIndices.nextSetBit(0)];
+                synchronized (reducedSample) {
+                    reducedSample.add(config);
+                }
+            }
+
+            for (i = 0; i < t2; i++) {
+                int index = elementIndices[i];
+                if (index + 1 < elementIndices[i + 1]) {
+                    if (marker[i]) {
+                        elementIndices[i] = index + 1;
+                    }
+                    marker[i] = !marker[i];
+                    for (int j = i - 1; j >= 0; j--) {
+                        elementIndices[j] = j;
+                        marker[j] = false;
+                    }
+                    break;
+                } else {
+                    if (marker[i]) {
+                        marker[i] = false;
+                        continue;
+                    } else {
+                        marker[i] = true;
+                        for (int j = i - 1; j >= 0; j--) {
+                            elementIndices[j] = j;
+                            marker[j] = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if (i == t2) {
+                if (marker[i]) {
+                    break;
+                } else {
+                    marker[i] = true;
+                    for (int j = i - 1; j >= 0; j--) {
+                        elementIndices[j] = j;
+                        marker[j] = false;
+                    }
+                }
+            }
+        }
+    }
+
     /**
-     * Method to reduce a given set of configuration to a t-wise sample with a
-     * random approach
+     * Method to reduce a given set of configuration to a sample covering the same
+     * t-wise interactions
      *
      * @param sample the set of configuration that will be reduced
      * @param t
      * @return the reduced sample
      */
     public List<BooleanSolution> reduce(List<BooleanSolution> sample, int t) {
-        List<BooleanSolution> reducedSample = new ArrayList<>();
         if (sample.size() == 0) {
-            return reducedSample;
+            return new ArrayList<>();
         }
+        n = sample.get(0).size();
 
-        ArrayList<BooleanSolution> fieldConfigurations = new ArrayList<>(sample);
-        Collections.shuffle(fieldConfigurations, new Random(seed));
+        if (t > n) {
+            throw new IllegalArgumentException(String.format("%d > %d", t, n));
+        }
+        this.t = t;
+        t2 = t - 1;
+        fieldConfigurations = new Config[sample.size()];
+        int fi = 0;
+        ArrayList<BooleanSolution> shuffeldSample = new ArrayList<>(sample);
+        Collections.shuffle(shuffeldSample, new Random(seed));
+        for (BooleanSolution solution : sample) {
+            fieldConfigurations[fi++] = new Config(solution);
+        }
+        
+        reducedSample = new LinkedHashSet<>();
+        interactions = new LinkedHashSet<>();
+        masterBitSet = new BitSet(fieldConfigurations.length);
+        masterBitSet.flip(0, fieldConfigurations.length);
 
-        BooleanSolution first = fieldConfigurations.remove(fieldConfigurations.size() - 1);
-        reducedSample.add(first);
-        LinkedHashSet<BooleanClause> finalInteractions = new LinkedHashSet<>();
-        int featureCount = sample.get(0).size();
-        int[] literals = getLiterals(featureCount);
-        int[] grayCode = Ints.grayCode(t);
-        LexicographicIterator.stream(t, featureCount).forEach(combination -> {
-            int[] select = combination.getSelection(literals);
-            if (!first.containsAll(select)) {
-                for (int g : grayCode) {
-                    if (fieldConfigurations.parallelStream().anyMatch(c -> c.containsAll(select))) {
-                        finalInteractions.add(new BooleanClause(Arrays.copyOf(select, select.length)));
-                    }
-                    select[g] = -select[g];
+        indices = new BitSet[2 * n + 1];
+        for (int j = 1; j <= n; j++) {
+            BitSet negIndices = new BitSet(fieldConfigurations.length);
+            BitSet posIndices = new BitSet(fieldConfigurations.length);
+            for (int i = 0; i < fieldConfigurations.length; i++) {
+                BooleanSolution config = fieldConfigurations[i];
+                if (config.get(j - 1) < 0) {
+                    negIndices.set(i);
+                } else {
+                    posIndices.set(i);
                 }
             }
-        });
-
-        while (!finalInteractions.isEmpty()) {
-            BooleanSolution nextConfig = fieldConfigurations.remove(fieldConfigurations.size() - 1);
-            reducedSample.add(nextConfig);
-            finalInteractions.removeIf(interaction -> nextConfig.containsAll(interaction));
+            indices[n - j] = negIndices;
+            indices[j + n] = posIndices;
         }
-        return reducedSample;
-    }
 
-    private int[] getLiterals(int featureCount) {
-        int[] literals = new int[featureCount * 2];
-        for (int i = 0; i < featureCount; i++) {
-            int literal = i + 1;
-            literals[i] = -literal;
-            literals[i + featureCount] = literal;
+        IntStream.range(t - 1, n).parallel().forEach(this::generate);
+
+        for (int j = 0; j < fieldConfigurations.length; j++) {
+            BooleanSolution config = fieldConfigurations[j];
+            if (reducedSample.contains(config)) {
+                masterBitSet.clear(j);
+            }
         }
-        return literals;
+
+        List<Interaction> collect = interactions.parallelStream()
+                .filter(interaction -> {
+                    if (reducedSample.stream().anyMatch(c -> c.containsAll(interaction))) {
+                        return true;
+                    } else {
+                        int[] is = interaction.get();
+                        BitSet curIndices = (BitSet) masterBitSet.clone();
+                        for (int k2 = 0; k2 < is.length; k2++) {
+                            curIndices.and(indices[is[k2] + n]);
+                        }
+                        curIndices.stream().forEach(i ->
+                                fieldConfigurations[i].incScore());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+        interactions.removeAll(collect);
+
+        while (!interactions.isEmpty()) {
+            int bestConfigIndex = -1;
+
+            for (int j = masterBitSet.nextSetBit(0); j >= 0; j = masterBitSet.nextSetBit(j + 1)) {
+                Config config = fieldConfigurations[j];
+                if (config.interactionCount == 0) {
+                    masterBitSet.clear(j);
+                } else {
+                    bestConfigIndex = j;
+                }
+            }
+            if (bestConfigIndex < 0) {
+                break;
+            }
+
+            BooleanSolution bestConfig = fieldConfigurations[bestConfigIndex];
+            reducedSample.add(bestConfig);
+            masterBitSet.clear(bestConfigIndex);
+
+            List<Interaction> collect2 = interactions.parallelStream()
+                    .filter(interaction -> bestConfig.containsAll(interaction))
+                    .peek(interaction -> {
+                        int[] is = interaction.get();
+                        BitSet curIndices = (BitSet) masterBitSet.clone();
+                        for (int k2 = 0; k2 < is.length; k2++) {
+                            curIndices.and(indices[is[k2] + n]);
+                        }
+                        curIndices.stream().forEach(i ->
+                                fieldConfigurations[i].decScore());
+                    })
+                    .collect(Collectors.toList());
+
+            interactions.removeAll(collect2);
+        }
+        return new ArrayList<>(reducedSample);
     }
 }
