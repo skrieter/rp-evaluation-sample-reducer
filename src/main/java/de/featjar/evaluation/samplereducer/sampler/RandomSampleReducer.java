@@ -169,9 +169,9 @@ public class RandomSampleReducer implements ISampleReducer {
         t2 = t - 1;
         fieldConfigurations = new Config[sample.size()];
         int fi = 0;
-        ArrayList<BooleanSolution> shuffeldSample = new ArrayList<>(sample);
-        Collections.shuffle(shuffeldSample, new Random(seed));
-        for (BooleanSolution solution : sample) {
+        ArrayList<BooleanSolution> shuffledSample = new ArrayList<>(sample);
+        Collections.shuffle(shuffledSample, new Random(seed));
+        for (BooleanSolution solution : shuffledSample) {
             fieldConfigurations[fi++] = new Config(solution);
         }
         
