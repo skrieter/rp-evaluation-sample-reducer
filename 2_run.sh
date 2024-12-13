@@ -9,7 +9,6 @@ args="-Xmx${max_memory}g -jar build/libs/evaluation-sample-reducer-0.1.0-SNAPSHO
 # Run
 java ${args} clean
 java ${args} prepare_tp
-#java ${args} prepare_industry
 java ${args} prepare_gd
 java ${args} yasa
 java ${args} combine

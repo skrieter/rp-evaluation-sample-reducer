@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Plot data
-python3 plot.py
+python3 plot.py --save
