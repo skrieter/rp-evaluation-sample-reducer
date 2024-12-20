@@ -102,10 +102,10 @@ def plot_coverage_box(df):
                                    'Combined (Random)'
                                    ])]
 
-    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': 'Field-Coverage ($t=1$)', \
-                     'f_2': 'Field-Coverage ($t=2$)', \
-                     't_1': 'T-Wise-Coverage ($t=1$)', \
-                     't_2': 'T-Wise-Coverage ($t=2$)'})
+    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': '$1$-Wise Fieldcoverage', \
+                     'f_2': '$2$-Wise Fieldcoverage', \
+                     't_1': '$1$-Wise-Coverage', \
+                     't_2': '$2$-Wise-Coverage'})
 
     df['TT'] = df['T'].astype(str)
     df['TT'] = df['TT'].replace({'1': '$t = 1$', \
@@ -136,10 +136,10 @@ def plot_size_per_sample_type_box(df):
                                    'Combined (Random)'
                                    ])]
 
-    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': 'Field-Coverage ($t=1$)', \
-                     'f_2': 'Field-Coverage ($t=2$)', \
-                     't_1': 'T-Wise-Coverage ($t=1$)', \
-                     't_2': 'T-Wise-Coverage ($t=2$)'})
+    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': '$1$-Wise Fieldcoverage', \
+                     'f_2': '$2$-Wise Fieldcoverage', \
+                     't_1': '$1$-Wise-Coverage', \
+                     't_2': '$2$-Wise-Coverage'})
 
     df['TT'] = df['T'].astype(str)
     df['TT'] = df['TT'].replace({'1': '$t = 1$', \
@@ -170,10 +170,10 @@ def plot_size_per_t_box(df):
                                    'Combined (Random)'
                                    ])]
 
-    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': 'Field-Coverage ($t=1$)', \
-                     'f_2': 'Field-Coverage ($t=2$)', \
-                     't_1': 'T-Wise-Coverage ($t=1$)', \
-                     't_2': 'T-Wise-Coverage ($t=2$)'})
+    df['CoverageMetricDisplay'] = df['CoverageMetric'].replace({'f_1': '$1$-Wise Fieldcoverage', \
+                     'f_2': '$2$-Wise Fieldcoverage', \
+                     't_1': '$1$-Wise-Coverage', \
+                     't_2': '$2$-Wise-Coverage'})
 
     df['TT'] = df['T'].astype(str)
     df['TT'] = df['TT'].replace({'1': '$t = 1$', \
@@ -215,7 +215,7 @@ def plot_reduced_size_scatter(df):
 
     p = (
     ggplot(df, aes(x='Size_org', y='Size', shape='AlgorithmText', fill='AlgorithmText'))
-    + geom_point(size=4)
+    + geom_point(size=3.5)
     #+ geom_line(aes(group='SampleTypeDisplay1', color='SampleTypeDisplay1'), linetype='dashed', show_legend=False)
     + scale_x_log10(labels=comma_format())
     + scale_y_log10(labels=comma_format())
@@ -248,7 +248,7 @@ def plot_time_scatter_systems(df):
 
     p = (
     ggplot(df, aes(x='SystemName', y='Time', shape='SampleTypeDisplay1', fill='SampleTypeDisplay1'))
-    + geom_jitter(width=0.3, height=0, size=4)
+    + geom_jitter(width=0.3, height=0, size=3.5)
     #+ geom_line(aes(group='SampleTypeDisplay1', color='SampleTypeDisplay1'), linetype='dashed', show_legend=False)
     + scale_y_log10(labels=comma_format())
     + theme(legend_position='top', axis_text_x=element_text(rotation=45, hjust=1))
@@ -280,7 +280,7 @@ def plot_size_scatter_systems(df):
 
     p = (
     ggplot(df, aes('SystemName', 'Size', shape='SampleTypeDisplay1', fill='SampleTypeDisplay1'))
-    + geom_jitter(width=0.3, height=0, size=4)
+    + geom_jitter(width=0.3, height=0, size=3.5)
     #+ geom_line(aes(group='SampleTypeDisplay1', color='SampleTypeDisplay1'), linetype='dashed', show_legend=False)
     + scale_y_log10(labels=comma_format())
     + theme(legend_position='top', axis_text_x=element_text(rotation=45, hjust=1))
