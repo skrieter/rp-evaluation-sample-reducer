@@ -4,6 +4,8 @@ build/resources
 build/scripts
 build/tmp
 build/scriptsShadow
+misc
+python_plot_environment
 .gradle
 .classpath
 .project
