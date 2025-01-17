@@ -183,7 +183,7 @@ def plot_size_per_t_box(df):
     ggplot(df, aes('TT', 'Size', fill='SampleTypeDisplay1'))
     + geom_boxplot()
     + scale_y_log10(labels=comma_format())
-    + theme(legend_position='top', axis_text_x=element_text(rotation=20, hjust=1))
+    + theme(legend_position='top', figure_size=(6, 4))
     + labs(x='t-value used for reduction/sampling', y='Sample Size', fill='')
     )
     create_plot('size_per_t', p, config, 1)
